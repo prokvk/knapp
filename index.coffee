@@ -1,6 +1,19 @@
 _ = require('lodash')
 
-initRoutes = (params) ->
+defaults =
+	env_path: './config/.env'
+	config_path: './config/config.cson'
+	api_base_url: '/api/v1'
+	auth: false
+
+loadConfig = (params, extend = true) ->
+	params = _.extend defaults, params if extend
+	process.knapp_params = params
+
+	require('dotenv').config {path: params.env_path}
+	require('cson-config').load(params.config_path)
+
+initRoutes = (routes) ->
 	process.app.all '/*', (req, res, next)->
 		# CORS headers
 		res.header 'Access-Control-Allow-Origin', '*' # restrict it to the required domain
@@ -13,14 +26,15 @@ initRoutes = (params) ->
 		else
 			next()
 
-	if params.auth is true
+	if process.knapp_params.auth is true
 		# Auth Middleware - This will check if the token is valid
 		# Only the requests that start with /api/v1/* will be checked for the token.
 		# Any URL's that do not follow the below pattern should be avoided unless you 
 		# are sure that authentication is not needed
-		process.app.all "#{params.apiBaseUrl}/*", [ require('./middlewares/validateRequest') config, auth ]
+		process.app.all "#{process.knapp_params.api_base_url}/*", [ require('./middlewares/validateRequest') config, auth ]
 
-	process.app.use '/', require('./routes') auth, imgs
+	router = require('./router')
+	process.app.use '/', routes
 
 	# If no route is matched by now, it must be a 404
 	process.app.use (req, res, next)->
@@ -29,20 +43,26 @@ initRoutes = (params) ->
 		next res.json {success: false, message: 'ERROR: 404 Not found'}
 
 exports.init = (params) ->
-		require('dotenv').config {path: params.envPath}
-		require('cson-config').load(params.configPath)
+	params = _.extend defaults, params
+	loadConfig params, false
 
-		express = require('express')
-		logger = require('morgan')
-		bodyParser = require('body-parser')
+	express = require('express')
+	logger = require('morgan')
+	bodyParser = require('body-parser')
 
-		app = express()
-		app.use logger('dev')
-		app.use bodyParser.json()
+	app = express()
+	app.use logger('dev')
+	app.use bodyParser.json()
 
-		initRoutes params
+	process.app = app
 
-		process.app = app
+exports.setRoutes = (routes) ->
+	initRoutes routes
 
-exports.test = () ->
-		console.log process.config
+exports.start = (port) ->
+	process.app.listen port, ()->
+		console.log "knapp server listening on port '#{port}'"
+
+exports.loadConfig = loadConfig
+
+exports.router = require('./router')
