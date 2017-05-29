@@ -25,7 +25,6 @@
   };
 
   initRoutes = function(routes) {
-    var router;
     process.app.all('/*', function(req, res, next) {
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,UPDATE,DELETE,OPTIONS');
@@ -39,16 +38,11 @@
     if (process.knapp_params.auth === true) {
       process.app.all(process.knapp_params.api_base_url + "/*", [require('./middlewares/validateRequest')(config, auth)]);
     }
-    router = require('./router');
     process.app.use('/', routes);
     return process.app.use(function(req, res, next) {
-      var err;
-      err = new Error('Not Found');
-      err.status = 404;
-      return next(res.json({
-        success: false,
-        message: 'ERROR: 404 Not found'
-      }));
+      return next(res.send({
+        error: '404 Not found'
+      }, 404));
     });
   };
 

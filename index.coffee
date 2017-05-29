@@ -33,14 +33,11 @@ initRoutes = (routes) ->
 		# are sure that authentication is not needed
 		process.app.all "#{process.knapp_params.api_base_url}/*", [ require('./middlewares/validateRequest') config, auth ]
 
-	router = require('./router')
 	process.app.use '/', routes
 
 	# If no route is matched by now, it must be a 404
 	process.app.use (req, res, next)->
-		err = new Error('Not Found')
-		err.status = 404
-		next res.json {success: false, message: 'ERROR: 404 Not found'}
+		next res.send {error: '404 Not found'}, 404
 
 exports.init = (params) ->
 	params = _.extend defaults, params
