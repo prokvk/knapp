@@ -3,24 +3,27 @@ express = require('express')
 router = express.Router()
 
 module.exports = do () ->
-	addRoute = () ->
-		#prefix
-		#schema validation
-		1
+	addRoute = (method, url, schema, cb) ->
+		router[method] "#{process.knapp_params.api_base_url}#{url}", (req, res) ->
+			dataRaw = if ['get', 'delete'].indexOf(method) is -1 then req.body else req.query
+			if schema?
+				err = validateInput dataRaw, schema
+				return res.json err if err
+			cb req, res
 
 	get: (url, schema = null, cb) ->
-		router.get url, cb
+		addRoute 'get', url, schema, cb
 
 	put: (url, schema = null, cb) ->
-		router.put url, cb
+		addRoute 'put', url, schema, cb
 
 	post: (url, schema = null, cb) ->
-		router.post url, cb
+		addRoute 'post', url, schema, cb
 
 	update: (url, schema = null, cb) ->
-		router.update url, cb
+		addRoute 'update', url, schema, cb
 
 	delete: (url, schema = null, cb) ->
-		router.delete url, cb
+		addRoute 'delete', url, schema, cb
 
 	getRouter: () -> router

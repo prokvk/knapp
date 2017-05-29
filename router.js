@@ -9,39 +9,49 @@
 
   module.exports = (function() {
     var addRoute;
-    addRoute = function() {
-      return 1;
+    addRoute = function(method, url, schema, cb) {
+      return router[method]("" + process.knapp_params.api_base_url + url, function(req, res) {
+        var dataRaw, err;
+        dataRaw = ['get', 'delete'].indexOf(method) === -1 ? req.body : req.query;
+        if (schema != null) {
+          err = validateInput(dataRaw, schema);
+          if (err) {
+            return res.json(err);
+          }
+        }
+        return cb(req, res);
+      });
     };
     return {
       get: function(url, schema, cb) {
         if (schema == null) {
           schema = null;
         }
-        return router.get(url, cb);
+        return addRoute('get', url, schema, cb);
       },
       put: function(url, schema, cb) {
         if (schema == null) {
           schema = null;
         }
-        return router.put(url, cb);
+        return addRoute('put', url, schema, cb);
       },
       post: function(url, schema, cb) {
         if (schema == null) {
           schema = null;
         }
-        return router.post(url, cb);
+        return addRoute('post', url, schema, cb);
       },
       update: function(url, schema, cb) {
         if (schema == null) {
           schema = null;
         }
-        return router.update(url, cb);
+        return addRoute('update', url, schema, cb);
       },
       "delete": function(url, schema, cb) {
         if (schema == null) {
           schema = null;
         }
-        return router["delete"](url, cb);
+        return addRoute('delete', url, schema, cb);
       },
       getRouter: function() {
         return router;
