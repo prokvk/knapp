@@ -4,7 +4,7 @@ defaults =
 	env_path: './config/.env'
 	config_path: './config/config.cson'
 	api_base_url: '/api/v1'
-	auth: false
+	auth: 'none'
 
 loadConfig = (params, extend = true) ->
 	params = _.extend defaults, params if extend
@@ -26,11 +26,13 @@ initRoutes = (routes) ->
 		else
 			next()
 
-	if process.knapp_params.auth is true
+	if process.knapp_params.auth isnt 'none'
 		# Auth Middleware - This will check if the token is valid
 		# Only the requests that start with /api/v1/* will be checked for the token.
 		# Any URL's that do not follow the below pattern should be avoided unless you 
 		# are sure that authentication is not needed
+		auth = require('./lib/auth') {}
+
 		process.app.all "#{process.knapp_params.api_base_url}/*", [ require('./middlewares/validateRequest') auth ]
 
 	process.app.use '/', routes

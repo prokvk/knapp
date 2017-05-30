@@ -7,7 +7,7 @@
     env_path: './config/.env',
     config_path: './config/config.cson',
     api_base_url: '/api/v1',
-    auth: false
+    auth: 'none'
   };
 
   loadConfig = function(params, extend) {
@@ -25,6 +25,7 @@
   };
 
   initRoutes = function(routes) {
+    var auth;
     process.app.all('/*', function(req, res, next) {
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,UPDATE,DELETE,OPTIONS');
@@ -35,8 +36,9 @@
         return next();
       }
     });
-    if (process.knapp_params.auth === true) {
-      process.app.all(process.knapp_params.api_base_url + "/*", [require('./middlewares/validateRequest')(config, auth)]);
+    if (process.knapp_params.auth !== 'none') {
+      auth = require('./lib/auth')({});
+      process.app.all(process.knapp_params.api_base_url + "/*", [require('./middlewares/validateRequest')(auth)]);
     }
     process.app.use('/', routes);
     return process.app.use(function(req, res, next) {

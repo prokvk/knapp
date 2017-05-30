@@ -3,17 +3,28 @@
 
   jwt = require('jwt-simple');
 
-  module.exports = function(config, auth) {
+  module.exports = function(auth) {
     return function(req, res, next) {
-      var dbUser, decoded, err, error, key, token, validateUser;
-      validateUser = auth.validateUser;
-      token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
-      key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
-      if (key === config.node.tests.x_key && token === config.node.tests.x_access_token) {
+      var dbUser, decoded, err, error, key, token;
+      if (process.knapp_params.auth === 'none') {
         return next();
       }
+      token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
+      key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
+      if (process.knapp_params.auth === 'static_token') {
+        if (process.config.knapp.static_tokens.indexOf(token) === -1) {
+          res.status(400);
+          res.json({
+            "status": 400,
+            "message": "Invalid Token"
+          });
+          return;
+        } else {
+          return next();
+        }
+      }
       try {
-        decoded = jwt.decode(token, require('../config/secret.coffee')());
+        decoded = jwt.decode(token, process.env.APP_SECRET);
         if (decoded.exp <= Date.now()) {
           res.status(400);
           res.json({
@@ -30,7 +41,7 @@
           });
           return;
         }
-        dbUser = validateUser(key);
+        dbUser = auth.validateUser(key);
         if (!dbUser) {
           res.status(403);
           res.json({
