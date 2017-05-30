@@ -1,4 +1,4 @@
-validateInput = require( './util/jsonschema_validator' ).validateInput
+validateInput = require( 'knode-jsv' ).validateInput
 express = require('express')
 router = express.Router()
 

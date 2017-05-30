@@ -1,7 +1,7 @@
 (function() {
   var express, router, validateInput;
 
-  validateInput = require('./util/jsonschema_validator').validateInput;
+  validateInput = require('knode-jsv').validateInput;
 
   express = require('express');
 

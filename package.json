@@ -21,7 +21,7 @@
     "cson-config": "^0.1.12",
     "dotenv": "^4.0.0",
     "express": "^4.15.3",
-    "jsonschema": "^1.1.1",
+    "knode-jsv": "^1.0.0",
     "lodash": "^4.17.4",
     "morgan": "^1.8.2"
   }
