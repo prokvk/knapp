@@ -1,9 +1,5 @@
 (function() {
-  var jwt;
-
-  jwt = require('jwt-simple');
-
-  module.exports = function(auth) {
+  module.exports = (function() {
     return function(req, res, next) {
       var token;
       if (process.knapp_params.auth === 'none') {
@@ -24,6 +20,6 @@
       }
       return next();
     };
-  };
+  })();
 
 }).call(this);

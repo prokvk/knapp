@@ -25,7 +25,6 @@
   };
 
   initRoutes = function(routes) {
-    var auth, usersModel;
     process.app.all('/*', function(req, res, next) {
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,UPDATE,DELETE,OPTIONS');
@@ -37,9 +36,7 @@
       }
     });
     if (process.knapp_params.auth !== 'none') {
-      usersModel = require('./lib/users');
-      auth = require('./lib/auth')(usersModel);
-      process.app.all(process.knapp_params.api_base_url + "/*", [require('./middlewares/validateRequest')(auth)]);
+      process.app.all(process.knapp_params.api_base_url + "/*", [require('./middlewares/validateRequest')]);
     }
     process.app.use('/', routes);
     return process.app.use(function(req, res, next) {
