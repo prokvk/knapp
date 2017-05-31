@@ -16,44 +16,44 @@ module.exports = (auth) -> (req, res, next)->
 		else
 			return next()
 
-	if process.knapp_params.auth is 'user'
-		key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key']
+	# if process.knapp_params.auth is 'user'
+	# 	key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key']
 
-		try
-			decoded = jwt.decode token, process.env.APP_SECRET
-			if decoded.exp <= Date.now()
-				res.status 400
-				res.json {
-					"status": 400,
-					"message": "Token Expired"
-				}
-				return
+	# 	try
+	# 		decoded = jwt.decode token, process.env.APP_SECRET
+	# 		if decoded.exp <= Date.now()
+	# 			res.status 400
+	# 			res.json {
+	# 				"status": 400,
+	# 				"message": "Token Expired"
+	# 			}
+	# 			return
 
-			# Authorize the user to see if s/he can access our resources
-			if decoded.username isnt key
-				res.status 401
-				res.json {
-					"status": 401,
-					"message": "Invalid User"
-				}
-				return
+	# 		# Authorize the user to see if s/he can access our resources
+	# 		if decoded.username isnt key
+	# 			res.status 401
+	# 			res.json {
+	# 				"status": 401,
+	# 				"message": "Invalid User"
+	# 			}
+	# 			return
 
-			dbUser = auth.validateUser key # The key would be the logged in user's username
-			unless dbUser
-				res.status 403
-				res.json {
-					"status": 403,
-					"message": "Not Authorized"
-				}
-				return
+	# 		dbUser = auth.validateUser key # The key would be the logged in user's username
+	# 		unless dbUser
+	# 			res.status 403
+	# 			res.json {
+	# 				"status": 403,
+	# 				"message": "Not Authorized"
+	# 			}
+	# 			return
 
-			next()
-		catch err
-			res.status 500
-			res.json {
-				"status": 500,
-				"message": "Oops something went wrong",
-				"error": err
-			}
+	# 		next()
+	# 	catch err
+	# 		res.status 500
+	# 		res.json {
+	# 			"status": 500,
+	# 			"message": "Oops something went wrong",
+	# 			"error": err
+	# 		}
 
 	next()
