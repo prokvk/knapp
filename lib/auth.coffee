@@ -3,7 +3,7 @@ jwt = require('jwt-simple')
 module.exports = (usersModel) =>
 	genToken = (user)->
 		expires = expiresIn 7 # 7 days
-		token = jwt.encode { exp: expires, username: user.username }, require('../config/secret')()
+		token = jwt.encode { exp: expires, username: user.username }, process.env.APP_SECRET
 		{
 			token: token,
 			expires: expires,
@@ -21,7 +21,7 @@ module.exports = (usersModel) =>
 		username = req.body.username || ''
 		password = req.body.password || ''
 		if (username is '' || password is '')
-			res.status(401)
+			res.status 401
 			res.json {
 				"status": 401,
 				"message": "Invalid credentials"
