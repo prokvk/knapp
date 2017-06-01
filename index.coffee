@@ -37,7 +37,7 @@ initRoutes = (routes) ->
 
 	# If no route is matched by now, it must be a 404
 	process.app.use (req, res, next)->
-		next res.send {error: '404 Not found'}, 404
+		next res.status(404).send {error: '404 Not found'}
 
 exports.init = (params) ->
 	params = _.extend defaults, params

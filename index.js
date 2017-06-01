@@ -40,9 +40,9 @@
     }
     process.app.use('/', routes);
     return process.app.use(function(req, res, next) {
-      return next(res.send({
+      return next(res.status(404).send({
         error: '404 Not found'
-      }, 404));
+      }));
     });
   };
 
