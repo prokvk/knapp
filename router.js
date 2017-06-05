@@ -9,12 +9,22 @@
 
   module.exports = (function() {
     var addRoute;
-    addRoute = function(method, url, schema, cb) {
+    addRoute = function(method, url, meta, cb) {
+      if (process.routes == null) {
+        process.routes = {
+          get: {},
+          put: {},
+          post: {},
+          update: {},
+          "delete": {}
+        };
+      }
+      process.routes[method][url] = meta;
       return router[method]("" + process.knapp_params.api_base_url + url, function(req, res) {
         var dataRaw, err;
         dataRaw = ['get', 'delete'].indexOf(method) === -1 ? req.body : req.query;
-        if (schema != null) {
-          err = validateInput(dataRaw, schema);
+        if ((meta != null ? meta.inSchema : void 0) != null) {
+          err = validateInput(dataRaw, meta.inSchema);
           if (err) {
             return res.json(err);
           }
@@ -23,35 +33,35 @@
       });
     };
     return {
-      get: function(url, schema, cb) {
-        if (schema == null) {
-          schema = null;
+      get: function(url, meta, cb) {
+        if (meta == null) {
+          meta = null;
         }
-        return addRoute('get', url, schema, cb);
+        return addRoute('get', url, meta, cb);
       },
-      put: function(url, schema, cb) {
-        if (schema == null) {
-          schema = null;
+      put: function(url, meta, cb) {
+        if (meta == null) {
+          meta = null;
         }
-        return addRoute('put', url, schema, cb);
+        return addRoute('put', url, meta, cb);
       },
-      post: function(url, schema, cb) {
-        if (schema == null) {
-          schema = null;
+      post: function(url, meta, cb) {
+        if (meta == null) {
+          meta = null;
         }
-        return addRoute('post', url, schema, cb);
+        return addRoute('post', url, meta, cb);
       },
-      update: function(url, schema, cb) {
-        if (schema == null) {
-          schema = null;
+      update: function(url, meta, cb) {
+        if (meta == null) {
+          meta = null;
         }
-        return addRoute('update', url, schema, cb);
+        return addRoute('update', url, meta, cb);
       },
-      "delete": function(url, schema, cb) {
-        if (schema == null) {
-          schema = null;
+      "delete": function(url, meta, cb) {
+        if (meta == null) {
+          meta = null;
         }
-        return addRoute('delete', url, schema, cb);
+        return addRoute('delete', url, meta, cb);
       },
       getRouter: function() {
         return router;

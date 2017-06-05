@@ -1,5 +1,5 @@
 (function() {
-  var _, defaults, initRoutes, loadConfig;
+  var _, defaults, generateSwaggerFile, initRoutes, loadConfig, setMode;
 
   _ = require('lodash');
 
@@ -22,6 +22,24 @@
       path: params.env_path
     });
     return require('cson-config').load(params.config_path);
+  };
+
+  setMode = function() {
+    var i, item, len, mode, ref;
+    mode = null;
+    ref = process.argv;
+    for (i = 0, len = ref.length; i < len; i++) {
+      item = ref[i];
+      if (item.match(/^mode=/)) {
+        mode = item.replace(/^mode=/, '');
+        break;
+      }
+    }
+    return process.knapp_params.mode = mode;
+  };
+
+  generateSwaggerFile = function() {
+    return require('./gendoc').generateSwaggerFile();
   };
 
   initRoutes = function(routes) {
@@ -56,6 +74,7 @@
     app = express();
     app.use(logger('dev'));
     app.use(bodyParser.json());
+    setMode();
     return process.app = app;
   };
 
@@ -63,10 +82,22 @@
     return initRoutes(routes);
   };
 
+  exports.getMode = function() {
+    return process.knapp_params.mode;
+  };
+
   exports.start = function(port) {
-    return process.app.listen(port, function() {
-      return console.log("knapp server listening on port '" + port + "'");
-    });
+    if (process.knapp_params.mode === 'tests') {
+      console.log('do tests');
+      return process.exit(0);
+    } else if (process.knapp_params.mode === 'gendoc') {
+      generateSwaggerFile();
+      return process.exit(0);
+    } else {
+      return process.app.listen(port, function() {
+        return console.log("knapp server listening on port '" + port + "'");
+      });
+    }
   };
 
   exports.loadConfig = loadConfig;

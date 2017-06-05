@@ -3,27 +3,30 @@ express = require('express')
 router = express.Router()
 
 module.exports = do () ->
-	addRoute = (method, url, schema, cb) ->
+	addRoute = (method, url, meta, cb) ->
+		process.routes ?= {get: {},put: {},post: {},update: {},delete: {}}
+		process.routes[method][url] = meta
+
 		router[method] "#{process.knapp_params.api_base_url}#{url}", (req, res) ->
 			dataRaw = if ['get', 'delete'].indexOf(method) is -1 then req.body else req.query
-			if schema?
-				err = validateInput dataRaw, schema
+			if meta?.inSchema?
+				err = validateInput dataRaw, meta.inSchema
 				return res.json err if err
 			cb req, res
 
-	get: (url, schema = null, cb) ->
-		addRoute 'get', url, schema, cb
+	get: (url, meta = null, cb) ->
+		addRoute 'get', url, meta, cb
 
-	put: (url, schema = null, cb) ->
-		addRoute 'put', url, schema, cb
+	put: (url, meta = null, cb) ->
+		addRoute 'put', url, meta, cb
 
-	post: (url, schema = null, cb) ->
-		addRoute 'post', url, schema, cb
+	post: (url, meta = null, cb) ->
+		addRoute 'post', url, meta, cb
 
-	update: (url, schema = null, cb) ->
-		addRoute 'update', url, schema, cb
+	update: (url, meta = null, cb) ->
+		addRoute 'update', url, meta, cb
 
-	delete: (url, schema = null, cb) ->
-		addRoute 'delete', url, schema, cb
+	delete: (url, meta = null, cb) ->
+		addRoute 'delete', url, meta, cb
 
 	getRouter: () -> router

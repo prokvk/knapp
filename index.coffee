@@ -1,4 +1,4 @@
-_ = require('lodash')
+_ = require 'lodash'
 
 defaults =
 	env_path: './config/.env'
@@ -12,6 +12,17 @@ loadConfig = (params, extend = true) ->
 
 	require('dotenv').config {path: params.env_path}
 	require('cson-config').load(params.config_path)
+
+setMode = () ->
+	mode = null
+	for item in process.argv
+		if item.match /^mode=/
+			mode = item.replace /^mode=/, ''
+			break
+
+	process.knapp_params.mode = mode
+
+generateSwaggerFile = () -> require('./gendoc').generateSwaggerFile()
 
 initRoutes = (routes) ->
 	process.app.all '/*', (req, res, next)->
@@ -51,14 +62,24 @@ exports.init = (params) ->
 	app.use logger('dev')
 	app.use bodyParser.json()
 
+	setMode()
+
 	process.app = app
 
-exports.setRoutes = (routes) ->
-	initRoutes routes
+exports.setRoutes = (routes) -> initRoutes routes
+
+exports.getMode = () -> process.knapp_params.mode
 
 exports.start = (port) ->
-	process.app.listen port, ()->
-		console.log "knapp server listening on port '#{port}'"
+	if process.knapp_params.mode is 'tests'
+		console.log 'do tests'
+		process.exit 0
+	else if process.knapp_params.mode is 'gendoc'
+		generateSwaggerFile()
+		process.exit 0
+	else
+		process.app.listen port, ()->
+			console.log "knapp server listening on port '#{port}'"
 
 exports.loadConfig = loadConfig
 
