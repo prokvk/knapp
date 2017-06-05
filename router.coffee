@@ -1,8 +1,6 @@
 validateInput = require( 'knode-jsv' ).validateInput
-express = require('express')
-router = express.Router()
 
-module.exports = do () ->
+module.exports = (router) ->
 	addRoute = (method, url, meta, cb) ->
 		process.routes ?= {get: {},put: {},post: {},update: {},delete: {}}
 		process.routes[method][url] = meta

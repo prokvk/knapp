@@ -75,7 +75,8 @@
     app.use(logger('dev'));
     app.use(bodyParser.json());
     setMode();
-    return process.app = app;
+    process.app = app;
+    return process.router = require('./router')(express.Router());
   };
 
   exports.setRoutes = function(routes) {
@@ -102,6 +103,8 @@
 
   exports.loadConfig = loadConfig;
 
-  exports.router = require('./router');
+  exports.getRouter = function() {
+    return process.router;
+  };
 
 }).call(this);

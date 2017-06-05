@@ -65,6 +65,7 @@ exports.init = (params) ->
 	setMode()
 
 	process.app = app
+	process.router = require('./router') express.Router()
 
 exports.setRoutes = (routes) -> initRoutes routes
 
@@ -83,4 +84,4 @@ exports.start = (port) ->
 
 exports.loadConfig = loadConfig
 
-exports.router = require('./router')
+exports.getRouter = () -> process.router

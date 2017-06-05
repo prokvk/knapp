@@ -1,13 +1,9 @@
 (function() {
-  var express, router, validateInput;
+  var validateInput;
 
   validateInput = require('knode-jsv').validateInput;
 
-  express = require('express');
-
-  router = express.Router();
-
-  module.exports = (function() {
+  module.exports = function(router) {
     var addRoute;
     addRoute = function(method, url, meta, cb) {
       if (process.routes == null) {
@@ -67,6 +63,6 @@
         return router;
       }
     };
-  })();
+  };
 
 }).call(this);
