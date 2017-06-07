@@ -1,5 +1,5 @@
 (function() {
-  var _, defaults, generateSwaggerFile, initRoutes, loadConfig, setMode;
+  var _, defaults, generateSwaggerFile, initRoutes, loadConfig, runTests, setMode;
 
   _ = require('lodash');
 
@@ -40,6 +40,10 @@
 
   generateSwaggerFile = function() {
     return require('./gendoc').generateSwaggerFile();
+  };
+
+  runTests = function() {
+    return require('./tests').runTests();
   };
 
   initRoutes = function(routes) {
@@ -89,7 +93,7 @@
 
   exports.start = function(port) {
     if (process.knapp_params.mode === 'tests') {
-      console.log('do tests');
+      runTests();
       return process.exit(0);
     } else if (process.knapp_params.mode === 'gendoc') {
       generateSwaggerFile();

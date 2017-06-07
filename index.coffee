@@ -24,6 +24,8 @@ setMode = () ->
 
 generateSwaggerFile = () -> require('./gendoc').generateSwaggerFile()
 
+runTests = () -> require('./tests').runTests()
+
 initRoutes = (routes) ->
 	process.app.all '/*', (req, res, next)->
 		# CORS headers
@@ -73,7 +75,7 @@ exports.getMode = () -> process.knapp_params.mode
 
 exports.start = (port) ->
 	if process.knapp_params.mode is 'tests'
-		console.log 'do tests'
+		runTests()
 		process.exit 0
 	else if process.knapp_params.mode is 'gendoc'
 		generateSwaggerFile()
