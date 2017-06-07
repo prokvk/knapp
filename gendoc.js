@@ -110,7 +110,8 @@
         data.paths[url][method] = getEndpointDefinition(method, url);
       }
     }
-    return fs.writeFileSync(conf.swagger.source_file, JSON.stringify(data, 'utf8'));
+    fs.writeFileSync(conf.swagger.source_file, JSON.stringify(data, 'utf8'));
+    return process.exit(0);
   };
 
 }).call(this);

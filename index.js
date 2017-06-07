@@ -93,11 +93,11 @@
 
   exports.start = function(port) {
     if (process.knapp_params.mode === 'tests') {
-      runTests();
-      return process.exit(0);
+      return process.app.listen(port, function() {
+        return runTests();
+      });
     } else if (process.knapp_params.mode === 'gendoc') {
-      generateSwaggerFile();
-      return process.exit(0);
+      return generateSwaggerFile();
     } else {
       return process.app.listen(port, function() {
         return console.log("knapp server listening on port '" + port + "'");

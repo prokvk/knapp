@@ -77,3 +77,4 @@ exports.generateSwaggerFile = () ->
 			data.paths[url][method] = getEndpointDefinition method, url
 
 	fs.writeFileSync conf.swagger.source_file, JSON.stringify data, 'utf8'
+	process.exit 0

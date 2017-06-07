@@ -75,11 +75,10 @@ exports.getMode = () -> process.knapp_params.mode
 
 exports.start = (port) ->
 	if process.knapp_params.mode is 'tests'
-		runTests()
-		process.exit 0
+		process.app.listen port, ()->
+			runTests()
 	else if process.knapp_params.mode is 'gendoc'
 		generateSwaggerFile()
-		process.exit 0
 	else
 		process.app.listen port, ()->
 			console.log "knapp server listening on port '#{port}'"
