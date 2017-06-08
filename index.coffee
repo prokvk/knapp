@@ -60,11 +60,11 @@ exports.init = (params) ->
 	logger = require('morgan')
 	bodyParser = require('body-parser')
 
-	app = express()
-	app.use logger('dev')
-	app.use bodyParser.json()
-
 	setMode()
+
+	app = express()
+	app.use logger('dev') if process.knapp_params.mode isnt 'tests'
+	app.use bodyParser.json()
 
 	process.app = app
 	process.router = require('./router') express.Router()

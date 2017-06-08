@@ -75,10 +75,12 @@
     express = require('express');
     logger = require('morgan');
     bodyParser = require('body-parser');
-    app = express();
-    app.use(logger('dev'));
-    app.use(bodyParser.json());
     setMode();
+    app = express();
+    if (process.knapp_params.mode !== 'tests') {
+      app.use(logger('dev'));
+    }
+    app.use(bodyParser.json());
     process.app = app;
     return process.router = require('./router')(express.Router());
   };

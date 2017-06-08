@@ -22,6 +22,7 @@
         if ((meta != null ? meta.inSchema : void 0) != null) {
           err = validateInput(dataRaw, meta.inSchema);
           if (err) {
+            res.status(400);
             return res.json(err);
           }
         }

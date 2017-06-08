@@ -9,7 +9,9 @@ module.exports = (router) ->
 			dataRaw = if ['get', 'delete'].indexOf(method) is -1 then req.body else req.query
 			if meta?.inSchema?
 				err = validateInput dataRaw, meta.inSchema
-				return res.json err if err
+				if err
+					res.status 400
+					return res.json err
 			cb req, res
 
 	get: (url, meta = null, cb) ->
