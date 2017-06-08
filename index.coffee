@@ -22,9 +22,9 @@ setMode = () ->
 
 	process.knapp_params.mode = mode
 
-generateSwaggerFile = () -> require('./gendoc').generateSwaggerFile()
+generateSwaggerFile = () -> require('./lib/gendoc').generateSwaggerFile()
 
-runTests = () -> require('./tests').runTests()
+runTests = () -> require('./lib/tests').runTests()
 
 initRoutes = (routes) ->
 	process.app.all '/*', (req, res, next)->
@@ -67,7 +67,7 @@ exports.init = (params) ->
 	app.use bodyParser.json()
 
 	process.app = app
-	process.router = require('./router') express.Router()
+	process.router = require('./lib/router') express.Router()
 
 exports.setRoutes = (routes) -> initRoutes routes
 

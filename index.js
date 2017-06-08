@@ -39,11 +39,11 @@
   };
 
   generateSwaggerFile = function() {
-    return require('./gendoc').generateSwaggerFile();
+    return require('./lib/gendoc').generateSwaggerFile();
   };
 
   runTests = function() {
-    return require('./tests').runTests();
+    return require('./lib/tests').runTests();
   };
 
   initRoutes = function(routes) {
@@ -82,7 +82,7 @@
     }
     app.use(bodyParser.json());
     process.app = app;
-    return process.router = require('./router')(express.Router());
+    return process.router = require('./lib/router')(express.Router());
   };
 
   exports.setRoutes = function(routes) {
