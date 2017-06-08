@@ -1,25 +1,8 @@
 fs = require 'fs'
-_ = require 'lodash'
-
-getNodestackConfigVals = (path) ->
-	data = fs.readFileSync path
-	lines = data.toString().split("\n").filter((item) -> _.trim(item) isnt '' and !item.match /^#/).map (item) -> _.trim item
-	res = {}
-	block = null
-	for item in lines
-		if item.match /^\[([^\)]+)\]$/
-			block = _.trim item, '[]'
-			res[block] ?= {}
-		else
-			if block?
-				name = item.replace /^([^=]+)=(.+)$/, '$1'
-				val = _.trim item.replace(/^([^=]+)=(.+)$/, '$2'), '\'"'
-				res[block][name] = val
-
-	res
+ns = require './nodestack'
 
 getHeader = () ->
-	conf = getNodestackConfigVals '.nodestack'
+	conf = ns.getNodestackConfigVals '.nodestack'
 
 	swagger: conf.swagger.swagger_version
 	info:
@@ -65,7 +48,7 @@ getEndpointDefinition = (method, url) ->
 exports.generateSwaggerFile = () ->
 	throw "ERROR: routes are empty" unless process.routes?
 
-	conf = getNodestackConfigVals '.nodestack'
+	conf = ns.getNodestackConfigVals '.nodestack'
 
 	data = getHeader()
 	data.paths = {}

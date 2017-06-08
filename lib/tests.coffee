@@ -2,6 +2,7 @@ req = require 'knode-request'
 validateInput = require('knode-jsv').validateInput
 async = require 'async'
 _ = require 'lodash'
+ns = require './nodestack'
 
 invalidSchemaCode = 400
 authErrorCode = 400
@@ -9,8 +10,8 @@ testsCount = 0
 successfulTests = 0
 
 getBaseApiUrl = () ->
-	#TODO - base API URL!!!
-	"http://172.17.0.4:8911/api/v1"
+	conf = ns.getNodestackConfigVals '.nodestack'
+	"#{conf.swagger.host}#{process.knapp_params.api_base_url}"
 	
 getTestRoutes = () ->
 	res = []
@@ -124,13 +125,17 @@ exports.runTests = () ->
 			testRoute routes[0], 'xxx invalid token', false, authErrorCode, "Expected #{authErrorCode} error for invalid auth token", cb
 		(cb) ->
 			#default routes tests
-			async.eachSeries routes, (route, cb) ->
-				testRoute route, authHeaderToken, true, 200, null, cb
+			async.eachSeries routes, (route, cb2) ->
+				testRoute route, authHeaderToken, true, 200, null, cb2
 			, cb
 	], (err) ->
 		if err
 			console.log err
 			process.exit 1
 
-		console.log "all good :)"
-		process.exit 0
+		if testsCount isnt successfulTests
+			console.log "Tests completed, there were some errors - #{successfulTests}/#{testsCount} passing."
+			process.exit 1
+		else
+			console.log "Tests completed - #{successfulTests}/#{testsCount} passing."
+			process.exit 0
