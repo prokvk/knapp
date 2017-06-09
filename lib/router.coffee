@@ -1,12 +1,18 @@
 validateInput = require( 'knode-jsv' ).validateInput
 
 module.exports = (router) ->
+	_getRequestData = (req) ->
+		if ['get', 'delete'].indexOf(req.method.toLowerCase()) is -1
+			return req.body
+		else
+			return req.query
+
 	addRoute = (method, url, meta, cb) ->
 		process.routes ?= {get: {},put: {},post: {},update: {},delete: {}}
 		process.routes[method][url] = meta
 
 		router[method] "#{process.knapp_params.api_base_url}#{url}", (req, res) ->
-			dataRaw = if ['get', 'delete'].indexOf(method) is -1 then req.body else req.query
+			dataRaw = _getRequestData req
 			if meta?.inSchema?
 				err = validateInput dataRaw, meta.inSchema
 				if err
@@ -28,5 +34,7 @@ module.exports = (router) ->
 
 	delete: (url, meta = null, cb) ->
 		addRoute 'delete', url, meta, cb
+
+	getRequestData: _getRequestData
 
 	getRouter: () -> router
