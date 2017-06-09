@@ -63,7 +63,7 @@ exports.init = (params) ->
 	setMode()
 
 	app = express()
-	app.use logger('dev') if process.knapp_params.mode isnt 'tests'
+	app.use logger('dev')
 	app.use bodyParser.json()
 
 	process.app = app

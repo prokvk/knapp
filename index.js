@@ -77,9 +77,7 @@
     bodyParser = require('body-parser');
     setMode();
     app = express();
-    if (process.knapp_params.mode !== 'tests') {
-      app.use(logger('dev'));
-    }
+    app.use(logger('dev'));
     app.use(bodyParser.json());
     process.app = app;
     return process.router = require('./lib/router')(express.Router());

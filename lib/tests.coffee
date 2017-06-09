@@ -9,10 +9,20 @@ authErrorCode = 400
 testsCount = 0
 successfulTests = 0
 
+customColors =
+	pass: 90
+	fail: 31
+
+symbols =
+	ok: '✓'
+	err: '✖'
+
 getBaseApiUrl = () ->
 	conf = ns.getNodestackConfigVals '.nodestack'
 	"#{conf.swagger.host}#{process.knapp_params.api_base_url}"
 	
+colorStr = (type, str) -> "\u001b[#{customColors[type]}m#{str}\u001b[0m"
+
 getTestRoutes = () ->
 	res = []
 
@@ -40,8 +50,9 @@ routeHasRequiredField = (route) ->
 testRoute = (route, authHeaderToken, checkSchema, expectedResponseCode, responseSuffix, done) ->
 	_log = (isValid, message) ->
 		{method, meta, path} = route
-		suffix = if responseSuffix? then " (#{responseSuffix})" else ""
-		console.log "- #{method.toUpperCase()} #{path}: #{message}#{suffix}"
+		suffix = if isValid and responseSuffix? then " (#{responseSuffix})" else ""
+		symbol = if isValid then colorStr('pass', symbols.ok) else colorStr('fail', symbols.err)
+		console.log "#{symbol} #{method.toUpperCase()} #{process.knapp_params.api_base_url}#{path}: #{message}#{suffix}\n"
 
 	{path, method, meta} = route
 
@@ -66,9 +77,6 @@ testRoute = (route, authHeaderToken, checkSchema, expectedResponseCode, response
 			#default endpoint test
 			testsCount++
 			req.send method, url, meta.testRequest, headers, (err, res) ->
-				if err
-					return cb err if !expectedResponseCode? or expectedResponseCode isnt res.statusCode
-
 				if checkSchema
 					err = validateInput res.body, meta.outSchema
 					if err
@@ -134,8 +142,12 @@ exports.runTests = () ->
 			process.exit 1
 
 		if testsCount isnt successfulTests
-			console.log "Tests completed, there were some errors - #{successfulTests}/#{testsCount} passing."
+			symbol = colorStr 'fail', symbols.err
+			sum = colorStr 'fail', "#{successfulTests}/#{testsCount}"
+			console.log "\n#{symbol} Tests completed, there were some errors - #{sum} passing."
 			process.exit 1
 		else
-			console.log "Tests completed - #{successfulTests}/#{testsCount} passing."
+			symbol = colorStr 'pass', symbols.ok
+			sum = colorStr 'pass', "#{successfulTests}/#{testsCount}"
+			console.log "\n#{symbol} Tests completed - #{sum} passing."
 			process.exit 0
