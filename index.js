@@ -24,8 +24,15 @@
     return require('cson-config').load(params.config_path);
   };
 
-  setMode = function() {
+  setMode = function(explicitMode) {
     var i, item, len, mode, ref;
+    if (explicitMode == null) {
+      explicitMode = null;
+    }
+    if (explicitMode != null) {
+      process.knapp_params.mode = explicitMode;
+      return;
+    }
     mode = null;
     ref = process.argv;
     for (i = 0, len = ref.length; i < len; i++) {
@@ -69,13 +76,14 @@
   };
 
   exports.init = function(params) {
-    var app, bodyParser, express, logger;
+    var app, bodyParser, explicitMode, express, logger;
     params = _.extend(defaults, params);
     loadConfig(params, false);
     express = require('express');
     logger = require('morgan');
     bodyParser = require('body-parser');
-    setMode();
+    explicitMode = params.mode || null;
+    setMode(explicitMode);
     app = express();
     app.use(logger('dev'));
     app.use(bodyParser.json());

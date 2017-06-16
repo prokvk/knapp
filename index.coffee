@@ -13,7 +13,11 @@ loadConfig = (params, extend = true) ->
 	require('dotenv').config {path: params.env_path}
 	require('cson-config').load(params.config_path)
 
-setMode = () ->
+setMode = (explicitMode = null) ->
+	if explicitMode?
+		process.knapp_params.mode = explicitMode
+		return
+
 	mode = null
 	for item in process.argv
 		if item.match /^mode=/
@@ -60,7 +64,8 @@ exports.init = (params) ->
 	logger = require('morgan')
 	bodyParser = require('body-parser')
 
-	setMode()
+	explicitMode = params.mode || null
+	setMode explicitMode
 
 	app = express()
 	app.use logger('dev')
