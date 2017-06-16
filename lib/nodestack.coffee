@@ -7,7 +7,7 @@ exports.getNodestackConfigVals = (path) ->
 	res = {}
 	block = null
 	for item in lines
-		if item.match /^\[([^\)]+)\]$/
+		if item.match /^\[([^\]]+)\]$/
 			block = _.trim item, '[]'
 			res[block] ?= {}
 		else
