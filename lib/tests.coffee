@@ -19,7 +19,7 @@ symbols =
 
 getBaseApiUrl = () ->
 	conf = ns.getNodestackConfigVals '.nodestack'
-	"#{conf.swagger.host}#{process.knapp_params.api_base_url}"
+	"http://localhost:#{process.config.knapp.port}#{process.knapp_params.api_base_url}"
 	
 colorStr = (type, str) -> "\u001b[#{customColors[type]}m#{str}\u001b[0m"
 
