@@ -80,6 +80,7 @@ exports.getMode = () -> process.knapp_params.mode
 
 exports.start = (port) ->
 	if process.knapp_params.mode is 'tests'
+		port = process.env.TESTS_PORT if process.env.TESTS_PORT?
 		process.app.listen port, ()->
 			runTests()
 	else if process.knapp_params.mode is 'gendoc'

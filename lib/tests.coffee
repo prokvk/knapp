@@ -18,7 +18,8 @@ symbols =
 	err: '✖'
 
 getBaseApiUrl = () ->
-	"http://localhost:#{process.config.knapp.port}#{process.knapp_params.api_base_url}"
+	port = if process.env.TESTS_PORT? then process.env.TESTS_PORT else process.config.knapp.port
+	"http://localhost:#{port}#{process.knapp_params.api_base_url}"
 	
 colorStr = (type, str) -> "\u001b[#{customColors[type]}m#{str}\u001b[0m"
 

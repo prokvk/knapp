@@ -101,6 +101,9 @@
 
   exports.start = function(port) {
     if (process.knapp_params.mode === 'tests') {
+      if (process.env.TESTS_PORT != null) {
+        port = process.env.TESTS_PORT;
+      }
       return process.app.listen(port, function() {
         return runTests();
       });
