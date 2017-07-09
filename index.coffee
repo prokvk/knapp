@@ -28,6 +28,8 @@ setMode = (explicitMode = null) ->
 
 generateSwaggerFile = () -> require('./lib/gendoc').generateSwaggerFile()
 
+generateDocumentation = () -> require('./lib/gendoc').generateDocumentation()
+
 runTests = () -> require('./lib/tests').runTests()
 
 initRoutes = (routes) ->
@@ -83,8 +85,10 @@ exports.start = (port) ->
 		port = process.env.TESTS_PORT if process.env.TESTS_PORT?
 		process.app.listen port, ()->
 			runTests()
-	else if process.knapp_params.mode is 'gendoc'
+	else if process.knapp_params.mode is 'genswaggerfile'
 		generateSwaggerFile()
+	else if process.knapp_params.mode is 'gendoc'
+		generateDocumentation()
 	else
 		process.app.listen port, ()->
 			console.log "knapp server listening on port '#{port}'"

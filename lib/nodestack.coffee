@@ -17,3 +17,7 @@ exports.getNodestackConfigVals = (path) ->
 				res[block][name] = val
 
 	res
+
+exports.getSwaggerData = (path) ->
+	data = fs.readFileSync path
+	JSON.parse data

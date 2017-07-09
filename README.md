@@ -8,7 +8,7 @@ is an application wrapper for Node API. It covers:
 - loading configs ([dotenv](https://www.npmjs.com/package/dotenv) + [cson-config](https://www.npmjs.com/package/cson-config))
 - auth (currently just static tokens)
 - router (with automatic validation [knode-jsv](https://www.npmjs.com/package/knode-jsv))
-- swagger-codegen integration (feature of [nodestack](https://github.com/prokvk/node-stack))
+- documentation generator (feature of [nodestack](https://github.com/prokvk/node-stack))
 - automated tests of routes (feature of [nodestack](https://github.com/prokvk/node-stack))
 
 # Install:
@@ -136,13 +136,15 @@ When defining routes, the router accepts `meta` object, full example of this obj
 
 ```javascript
 var meta = {
+  description: 'Endpoint description',
   inSchema: {
     type: 'object',
     required: true,
     properties: {
       importantField: {
         type: 'string',
-        required: true
+        required: true,
+        description: 'Field description'
       },
       limit: {
         type: 'integer'
@@ -163,9 +165,9 @@ var meta = {
 };
 ```
 
-The `inSchema` key, if provided, is used for automatic request validation. The `outSchema` and `testRequest` are used by swagger-codegen integration and automated tests.
+The `inSchema` key, if provided, is used for automatic request validation. The `outSchema` and `testRequest` are used by documentation generator and automated tests.
 
-swagger-codegen integration and automated tests are currently de facto designed to work with [nodestack](https://github.com/prokvk/node-stack). They are not prepared to work out of the box.
+Documentation generator and automated tests are currently de facto designed to work with [nodestack](https://github.com/prokvk/node-stack). They are not prepared to work out of the box.
 
 # Getting request data
 

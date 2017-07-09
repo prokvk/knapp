@@ -1,6 +1,6 @@
 {
   "name": "knapp",
-  "version": "1.0.12",
+  "version": "1.0.16",
   "description": "Node API app wrapper",
   "main": "index.js",
   "scripts": {

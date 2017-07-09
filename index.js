@@ -1,5 +1,5 @@
 (function() {
-  var _, defaults, generateSwaggerFile, initRoutes, loadConfig, runTests, setMode;
+  var _, defaults, generateDocumentation, generateSwaggerFile, initRoutes, loadConfig, runTests, setMode;
 
   _ = require('lodash');
 
@@ -47,6 +47,10 @@
 
   generateSwaggerFile = function() {
     return require('./lib/gendoc').generateSwaggerFile();
+  };
+
+  generateDocumentation = function() {
+    return require('./lib/gendoc').generateDocumentation();
   };
 
   runTests = function() {
@@ -107,8 +111,10 @@
       return process.app.listen(port, function() {
         return runTests();
       });
-    } else if (process.knapp_params.mode === 'gendoc') {
+    } else if (process.knapp_params.mode === 'genswaggerfile') {
       return generateSwaggerFile();
+    } else if (process.knapp_params.mode === 'gendoc') {
+      return generateDocumentation();
     } else {
       return process.app.listen(port, function() {
         return console.log("knapp server listening on port '" + port + "'");
