@@ -77,7 +77,7 @@ app.init({
 app.setRoutes(require('./routes')(app.getRouter()));
 
 app.start(process.config.knapp.port);
-``` 
+```
 
 This is the full configuration of knapp, initialized and listening on given port. You should only change the object given to the `app.init()` call. If you leave any of the keys out the defaults will be used, these are:
 
@@ -161,11 +161,13 @@ var meta = {
   },
   testRequest: {
     importantField: 'test'
-  }
+  },
+  testExpectedResponseCode: 500,
+  testResponseSuffix: 'Expected 500 error for invalid token'
 };
 ```
 
-The `inSchema` key, if provided, is used for automatic request validation. The `outSchema` and `testRequest` are used by documentation generator and automated tests.
+The `inSchema` key, if provided, is used for automatic request validation. The `outSchema`, `testRequest`, `testExpectedResponseCode` and `testResponseSuffix` are used by documentation generator and automated tests.
 
 Documentation generator and automated tests are currently de facto designed to work with [nodestack](https://github.com/prokvk/node-stack). They are not prepared to work out of the box.
 
