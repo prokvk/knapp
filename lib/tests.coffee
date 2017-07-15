@@ -20,7 +20,7 @@ symbols =
 getBaseApiUrl = () ->
 	port = if process.env.TESTS_PORT? then process.env.TESTS_PORT else process.config.knapp.port
 	"http://localhost:#{port}#{process.knapp_params.api_base_url}"
-	
+
 colorStr = (type, str) -> "\u001b[#{customColors[type]}m#{str}\u001b[0m"
 
 getTestRoutes = () ->
@@ -48,14 +48,24 @@ routeHasRequiredField = (route) ->
 	false
 
 testRoute = (route, authHeaderToken, checkSchema, expectedResponseCode, responseSuffix, done) ->
+	getExpectedResponseCode = (route) ->
+		return route.meta.testExpectedResponseCode if route.meta.testExpectedResponseCode?
+		expectedResponseCode
+
+	getResponseSuffix = (route) ->
+		return route.meta.testResponseSuffix if route.meta.testResponseSuffix?
+		responseSuffix
+
 	_log = (isValid, message) ->
 		{method, meta, path} = route
+		responseSuffix = getResponseSuffix route
 		suffix = if isValid and responseSuffix? then " (#{responseSuffix})" else ""
 		symbol = if isValid then colorStr('pass', symbols.ok) else colorStr('fail', symbols.err)
 		console.log "#{symbol} #{method.toUpperCase()} #{process.knapp_params.api_base_url}#{path}: #{message}#{suffix}\n"
 
 	{path, method, meta} = route
 
+	expectedResponseCode = getExpectedResponseCode route
 	headers = if authHeaderToken? then {'x-access-token': authHeaderToken} else null
 	url = "#{getBaseApiUrl()}#{path}"
 
