@@ -22,7 +22,7 @@ getEndpointDefinition = (method, url) ->
 		responses:
 			default:
 				description: 'Default response'
-				schema: if meta?.outSchema? then meta.outSchema else null 
+				schema: if meta?.outSchema? then meta.outSchema else null
 
 	data.description = meta.description if meta.description?
 
@@ -75,7 +75,7 @@ exports.generateSwaggerFile = () ->
 	process.exit 0
 
 exports.generateDocumentation = () ->
-	getMethodLabel = (method) -> 
+	getMethodLabel = (method) ->
 		map =
 			'get': 'success'
 			'put': 'warning'
@@ -110,17 +110,33 @@ exports.generateDocumentation = () ->
 		"curl -X#{method.toUpperCase()} -H \"Content-Type: #{swaggerData.consumes}\"#{token}#{data} #{swaggerData.host}#{path}#{uriParams}"
 
 	getEndpointParametersHtml = (swaggerData, method, path) ->
+		_getParamType = (param) ->
+			routeData = process.routes[method][path].inSchema.properties[param.name]
+			if routeData?.oneOf? #not read from swaggerfile since swagger doesn't support `oneOf`. for purpose of generating DOC this is taken from routes meta directly
+				opts = []
+				for item in routeData.oneOf
+					if item.type is 'array'
+						opts.push "array of #{item.items.type}s"
+					else
+						opts.push item.type
+				return opts.join '|'
+			else
+				return param.type if param.type?
+				return param.schema.type if param.schema?.type?
+				null
+
 		_getParamsTable = (params) ->
 			rows = ""
 			for item in params
 				req = if item.required then "<span class=\"label label-danger\">REQUIRED</span>" else ""
-				type = if item.type? then item.type else item.schema.type
+				type = _getParamType item
 				rows += "<tr>
 							<th scope=\"row\">#{item.name}</th>
 							<td>#{type}</td>
 							<td>#{req}</td>
 							<td>#{item.description || ''}</td>
 						</tr>"
+
 			"<table class=\"table table-striped m-0\">
 					<thead>
 						<tr>
