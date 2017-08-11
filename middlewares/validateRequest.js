@@ -8,12 +8,9 @@
       token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
       if (process.knapp_params.auth === 'static_token') {
         if (process.config.knapp.static_tokens.indexOf(token) === -1) {
-          res.status(400);
-          res.json({
-            "status": 400,
-            "message": "Invalid Token"
-          });
-          return;
+          return process.request_validation_error_handler({
+            message: "Invalid Token"
+          }, res);
         } else {
           return next();
         }

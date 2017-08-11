@@ -15,9 +15,7 @@ module.exports = (router) ->
 			dataRaw = _getRequestData req
 			if meta?.inSchema?
 				err = validateInput dataRaw, meta.inSchema
-				if err
-					res.status 400
-					return res.json err
+				return process.request_validation_error_handler(err, res) if err
 			cb req, res
 
 	get: (url, meta = null, cb) ->

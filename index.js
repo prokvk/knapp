@@ -1,5 +1,5 @@
 (function() {
-  var _, defaults, generateDocumentation, generateSwaggerFile, initRoutes, loadConfig, runTests, setMode;
+  var _, defaults, generateDocumentation, generateSwaggerFile, initRoutes, loadConfig, requestValidationErrorHandler, runTests, setMode;
 
   _ = require('lodash');
 
@@ -57,6 +57,11 @@
     return require('./lib/tests').runTests();
   };
 
+  requestValidationErrorHandler = function(err, res) {
+    res.status(400);
+    return res.json(err);
+  };
+
   initRoutes = function(routes) {
     process.app.all('/*', function(req, res, next) {
       res.header('Access-Control-Allow-Origin', '*');
@@ -92,7 +97,12 @@
     app.use(logger('dev'));
     app.use(bodyParser.json());
     process.app = app;
+    process.request_validation_error_handler = requestValidationErrorHandler;
     return process.router = require('./lib/router')(express.Router());
+  };
+
+  exports.setRequestValidationErrorHandler = function(handler) {
+    return process.request_validation_error_handler = handler;
   };
 
   exports.setRoutes = function(routes) {

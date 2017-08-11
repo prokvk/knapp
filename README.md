@@ -74,6 +74,15 @@ app.init({
   auth: 'static_token'
 });
 
+// optional call to set explicit error handler for validation (auth, schema) errors, here it's used just for formatting and setting response code
+app.setRequestValidationErrorHandler(function(err, res) {
+  res.status(400);
+  return res.json({
+    success: false,
+    error: err.message
+  });
+});
+
 app.setRoutes(require('./routes')(app.getRouter()));
 
 app.start(process.config.knapp.port);

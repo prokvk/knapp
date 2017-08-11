@@ -32,6 +32,10 @@ generateDocumentation = () -> require('./lib/gendoc').generateDocumentation()
 
 runTests = () -> require('./lib/tests').runTests()
 
+requestValidationErrorHandler = (err, res) ->
+	res.status 400
+	res.json err
+
 initRoutes = (routes) ->
 	process.app.all '/*', (req, res, next)->
 		# CORS headers
@@ -39,7 +43,7 @@ initRoutes = (routes) ->
 		res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,UPDATE,DELETE,OPTIONS'
 		# Set custom headers for CORS
 		res.header 'Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key'
-		
+
 		if req.method is 'OPTIONS'
 			res.status(200).end()
 		else
@@ -48,7 +52,7 @@ initRoutes = (routes) ->
 	if process.knapp_params.auth isnt 'none'
 		# Auth Middleware - This will check if the token is valid
 		# Only the requests that start with /api/v1/* will be checked for the token.
-		# Any URL's that do not follow the below pattern should be avoided unless you 
+		# Any URL's that do not follow the below pattern should be avoided unless you
 		# are sure that authentication is not needed
 		process.app.all "#{process.knapp_params.api_base_url}/*", [ require('./middlewares/validateRequest') ]
 
@@ -74,7 +78,10 @@ exports.init = (params) ->
 	app.use bodyParser.json()
 
 	process.app = app
+	process.request_validation_error_handler = requestValidationErrorHandler
 	process.router = require('./lib/router') express.Router()
+
+exports.setRequestValidationErrorHandler = (handler) -> process.request_validation_error_handler = handler
 
 exports.setRoutes = (routes) -> initRoutes routes
 
