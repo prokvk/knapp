@@ -1,7 +1,9 @@
 (function() {
-  var _, defaults, generateDocumentation, generateSwaggerFile, initRoutes, loadConfig, requestValidationErrorHandler, runTests, setMode;
+  var _, defaults, generateDocumentation, generateSwaggerFile, initRoutes, loadConfig, ns, requestValidationErrorHandler, runTests, setMode;
 
   _ = require('lodash');
+
+  ns = require('./lib/nodestack');
 
   defaults = {
     env_path: './config/.env',
@@ -133,6 +135,8 @@
   };
 
   exports.loadConfig = loadConfig;
+
+  exports.getNsConf = ns.getNodestackConfigVals;
 
   exports.getRouter = function() {
     return process.router;

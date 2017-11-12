@@ -1,7 +1,10 @@
 fs = require 'fs'
 _ = require 'lodash'
+yaml = require 'js-yaml'
 
-exports.getNodestackConfigVals = (path) ->
+exports.getNodestackConfigVals = () ->
+	return yaml.safeLoad(fs.readFileSync('nsconf.yml', 'utf8')) if fs.existsSync('nsconf.yml')
+	path = '.nodestack'
 	data = fs.readFileSync path
 	lines = data.toString().split("\n").filter((item) -> _.trim(item) isnt '' and !item.match /^#/).map (item) -> _.trim item
 	res = {}

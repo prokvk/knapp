@@ -1,4 +1,5 @@
 _ = require 'lodash'
+ns = require './lib/nodestack'
 
 defaults =
 	env_path: './config/.env'
@@ -101,5 +102,7 @@ exports.start = (port) ->
 			console.log "knapp server listening on port '#{port}'"
 
 exports.loadConfig = loadConfig
+
+exports.getNsConf = ns.getNodestackConfigVals
 
 exports.getRouter = () -> process.router

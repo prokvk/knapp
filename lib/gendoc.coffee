@@ -2,7 +2,7 @@ fs = require 'fs'
 ns = require './nodestack'
 
 getHeader = () ->
-	conf = ns.getNodestackConfigVals '.nodestack'
+	conf = ns.getNodestackConfigVals()
 
 	swagger: conf.swagger.swagger_version
 	info:
@@ -60,7 +60,7 @@ getEndpointDefinition = (method, url) ->
 exports.generateSwaggerFile = () ->
 	throw "ERROR: routes are empty" unless process.routes?
 
-	conf = ns.getNodestackConfigVals '.nodestack'
+	conf = ns.getNodestackConfigVals()
 
 	data = getHeader()
 	data.paths = {}
