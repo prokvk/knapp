@@ -66,9 +66,11 @@
 
   initRoutes = function(routes) {
     process.app.all('/*', function(req, res, next) {
+      var allowHeaders;
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,UPDATE,DELETE,OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
+      allowHeaders = process.knapp_params.allow_headers != null ? "," + (process.knapp_params.allow_headers.join(',')) : "";
+      res.header('Access-Control-Allow-Headers', "Content-type,Accept,X-Access-Token,X-Key" + allowHeaders);
       if (req.method === 'OPTIONS') {
         return res.status(200).end();
       } else {

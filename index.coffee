@@ -42,8 +42,11 @@ initRoutes = (routes) ->
 		# CORS headers
 		res.header 'Access-Control-Allow-Origin', '*' # restrict it to the required domain
 		res.header 'Access-Control-Allow-Methods', 'GET,PUT,POST,UPDATE,DELETE,OPTIONS'
+
+		allowHeaders = if process.knapp_params.allow_headers? then ",#{process.knapp_params.allow_headers.join(',')}" else ""
+
 		# Set custom headers for CORS
-		res.header 'Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key'
+		res.header 'Access-Control-Allow-Headers', "Content-type,Accept,X-Access-Token,X-Key#{allowHeaders}"
 
 		if req.method is 'OPTIONS'
 			res.status(200).end()
