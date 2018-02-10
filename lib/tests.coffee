@@ -116,7 +116,7 @@ testSchemaIntegrity = (routes) ->
 			throw """ERROR: schema definition is invalid, test request for \
 			route \"#{method.toUpperCase()} #{path}\" doesn't match defined input schema"""
 
-exports.runTests = () ->
+exports.runTests = (_done = null) ->
 	routes = getTestRoutes()
 
 	throw "ERROR: routes don't have any tests defined" if routes.length is 0
@@ -149,15 +149,18 @@ exports.runTests = () ->
 	], (err) ->
 		if err
 			console.log err
+			return _done null, 1 if _done?
 			process.exit 1
 
 		if testsCount isnt successfulTests
 			symbol = colorStr 'fail', symbols.err
 			sum = colorStr 'fail', "#{successfulTests}/#{testsCount}"
 			console.log "\n#{symbol} Tests completed, there were some errors - #{sum} passing."
+			return _done null, 1 if _done?
 			process.exit 1
 		else
 			symbol = colorStr 'pass', symbols.ok
 			sum = colorStr 'pass', "#{successfulTests}/#{testsCount}"
 			console.log "\n#{symbol} Tests completed - #{sum} passing."
+			return _done null, 0 if _done?
 			process.exit 0

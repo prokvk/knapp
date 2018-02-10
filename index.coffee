@@ -1,5 +1,6 @@
 _ = require 'lodash'
 ns = require './lib/nodestack'
+async = require 'async'
 
 defaults =
 	env_path: './config/.env'
@@ -31,11 +32,14 @@ generateSwaggerFile = () -> require('./lib/gendoc').generateSwaggerFile()
 
 generateDocumentation = () -> require('./lib/gendoc').generateDocumentation()
 
-runTests = () -> require('./lib/tests').runTests()
+runTests = (done = null) -> require('./lib/tests').runTests(done)
 
 requestValidationErrorHandler = (err, res) ->
 	res.status 400
 	res.json err
+
+testBeforeHandler = (done) -> done()
+testAfterHandler = (done) -> done()
 
 initRoutes = (routes) ->
 	process.app.all '/*', (req, res, next)->
@@ -83,9 +87,13 @@ exports.init = (params) ->
 
 	process.app = app
 	process.request_validation_error_handler = requestValidationErrorHandler
+	process.test_before_handler = testBeforeHandler
+	process.test_after_handler = testAfterHandler
 	process.router = require('./lib/router') express.Router()
 
 exports.setRequestValidationErrorHandler = (handler) -> process.request_validation_error_handler = handler
+exports.setTestBeforeHandler = (handler) -> process.test_before_handler = handler
+exports.setTestAfterHandler = (handler) -> process.test_after_handler = handler
 
 exports.setRoutes = (routes) -> initRoutes routes
 
@@ -95,7 +103,20 @@ exports.start = (port) ->
 	if process.knapp_params.mode is 'tests'
 		port = process.env.TESTS_PORT if process.env.TESTS_PORT?
 		process.app.listen port, ()->
-			runTests()
+			_res = 1
+
+			async.series [
+				(cb) ->
+					process.test_before_handler cb
+				(cb) ->
+					runTests (err, res) ->
+						return cb err if err
+						_res = res
+						cb()
+				(cb) ->
+					process.test_after_handler cb
+			], (err) ->
+				process.exit _res
 	else if process.knapp_params.mode is 'genswaggerfile'
 		generateSwaggerFile()
 	else if process.knapp_params.mode is 'gendoc'

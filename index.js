@@ -1,9 +1,11 @@
 (function() {
-  var _, defaults, generateDocumentation, generateSwaggerFile, initRoutes, loadConfig, ns, requestValidationErrorHandler, runTests, setMode;
+  var _, async, defaults, generateDocumentation, generateSwaggerFile, initRoutes, loadConfig, ns, requestValidationErrorHandler, runTests, setMode, testAfterHandler, testBeforeHandler;
 
   _ = require('lodash');
 
   ns = require('./lib/nodestack');
+
+  async = require('async');
 
   defaults = {
     env_path: './config/.env',
@@ -55,13 +57,24 @@
     return require('./lib/gendoc').generateDocumentation();
   };
 
-  runTests = function() {
-    return require('./lib/tests').runTests();
+  runTests = function(done) {
+    if (done == null) {
+      done = null;
+    }
+    return require('./lib/tests').runTests(done);
   };
 
   requestValidationErrorHandler = function(err, res) {
     res.status(400);
     return res.json(err);
+  };
+
+  testBeforeHandler = function(done) {
+    return done();
+  };
+
+  testAfterHandler = function(done) {
+    return done();
   };
 
   initRoutes = function(routes) {
@@ -102,11 +115,21 @@
     app.use(bodyParser.json());
     process.app = app;
     process.request_validation_error_handler = requestValidationErrorHandler;
+    process.test_before_handler = testBeforeHandler;
+    process.test_after_handler = testAfterHandler;
     return process.router = require('./lib/router')(express.Router());
   };
 
   exports.setRequestValidationErrorHandler = function(handler) {
     return process.request_validation_error_handler = handler;
+  };
+
+  exports.setTestBeforeHandler = function(handler) {
+    return process.test_before_handler = handler;
+  };
+
+  exports.setTestAfterHandler = function(handler) {
+    return process.test_after_handler = handler;
   };
 
   exports.setRoutes = function(routes) {
@@ -123,7 +146,25 @@
         port = process.env.TESTS_PORT;
       }
       return process.app.listen(port, function() {
-        return runTests();
+        var _res;
+        _res = 1;
+        return async.series([
+          function(cb) {
+            return process.test_before_handler(cb);
+          }, function(cb) {
+            return runTests(function(err, res) {
+              if (err) {
+                return cb(err);
+              }
+              _res = res;
+              return cb();
+            });
+          }, function(cb) {
+            return process.test_after_handler(cb);
+          }
+        ], function(err) {
+          return process.exit(_res);
+        });
       });
     } else if (process.knapp_params.mode === 'genswaggerfile') {
       return generateSwaggerFile();
