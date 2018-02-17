@@ -71,7 +71,9 @@ app.init({
   env_path: './config/.env',
   config_path: './config/config.cson',
   api_base_url: '/api/v1',
-  auth: 'static_token'
+  auth: 'static_token',
+  allow_headers: ['custom-header'],
+  sentry: 'on'
 });
 
 // optional call to set explicit error handler for validation (auth, schema) errors, here it's used just for formatting and setting response code
@@ -98,6 +100,8 @@ var defaults = {
   auth: 'none'
 };
 ```
+
+If you set `sentry: 'on'` you also need to set env var `SENTRY_URL`.
 
 After you call `app.init()` you have the following process variables available:
 

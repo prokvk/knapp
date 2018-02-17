@@ -133,7 +133,14 @@
   };
 
   exports.setRoutes = function(routes) {
-    return initRoutes(routes);
+    var raven;
+    initRoutes(routes);
+    if ((process.knapp_params.sentry != null) && process.knapp_params.sentry === 'on') {
+      raven = require('raven');
+      raven.config(process.env.SENTRY_URL).install();
+      process.app.use(raven.requestHandler());
+      return process.app.use(raven.errorHandler());
+    }
   };
 
   exports.getMode = function() {

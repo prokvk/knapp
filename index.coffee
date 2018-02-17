@@ -95,7 +95,15 @@ exports.setRequestValidationErrorHandler = (handler) -> process.request_validati
 exports.setTestBeforeHandler = (handler) -> process.test_before_handler = handler
 exports.setTestAfterHandler = (handler) -> process.test_after_handler = handler
 
-exports.setRoutes = (routes) -> initRoutes routes
+exports.setRoutes = (routes) ->
+	initRoutes routes
+
+	if process.knapp_params.sentry? and process.knapp_params.sentry is 'on'
+		raven = require 'raven'
+		raven.config(process.env.SENTRY_URL).install()
+
+		process.app.use raven.requestHandler()
+		process.app.use raven.errorHandler()
 
 exports.getMode = () -> process.knapp_params.mode
 
