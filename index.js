@@ -10,22 +10,23 @@
   defaults = {
     env_path: './config/.env',
     config_path: './config/config.cson',
-    api_base_url: '/api/v1',
-    auth: 'none'
+    api_base_url: '/api/v1'
   };
 
   loadConfig = function(params, extend) {
     if (extend == null) {
       extend = true;
     }
-    if (extend) {
-      params = _.extend(defaults, params);
-    }
-    process.knapp_params = params;
     require('dotenv').config({
       path: params.env_path
     });
-    return require('cson-config').load(params.config_path);
+    require('cson-config').load(params.config_path);
+    defaults.sentry = process.env.KNAPP_SENTRY != null ? process.env.KNAPP_SENTRY : "";
+    defaults.auth = process.env.KNAPP_AUTH != null ? process.env.KNAPP_AUTH : "none";
+    if (extend) {
+      params = _.extend(defaults, params);
+    }
+    return process.knapp_params = params;
   };
 
   setMode = function(explicitMode) {
@@ -103,8 +104,7 @@
 
   exports.init = function(params) {
     var app, bodyParser, explicitMode, express, logger;
-    params = _.extend(defaults, params);
-    loadConfig(params, false);
+    loadConfig(params);
     express = require('express');
     logger = require('morgan');
     bodyParser = require('body-parser');

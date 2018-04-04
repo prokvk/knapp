@@ -40,6 +40,8 @@ npm install --save knapp
 
 ```
 AUTH_TOKEN="your.secret.token.goes.here"
+KNAPP_AUTH="none"
+KNAPP_SENTRY=""
 KNAPP_PORT=8888
 MYSQL_USER=user
 MYSQL_PASS="secret.pass"
@@ -71,9 +73,9 @@ app.init({
   env_path: './config/.env',
   config_path: './config/config.cson',
   api_base_url: '/api/v1',
-  auth: 'static_token',
+  auth: 'static_token', // this value can be set via process.env.KNAPP_AUTH, but you can also override it in object passed to `init`
   allow_headers: ['custom-header'],
-  sentry: 'on'
+  sentry: 'on' // this value can be set via process.env.KNAPP_SENTRY, but you can also override it in object passed to `init`
 });
 
 // optional call to set explicit error handler for validation (auth, schema) errors, here it's used just for formatting and setting response code
@@ -97,7 +99,8 @@ var defaults = {
   env_path: './config/.env',
   config_path: './config/config.cson',
   api_base_url: '/api/v1',
-  auth: 'none'
+  auth: // value of process.env.KNAPP_AUTH | if not provided, default 'none' is used
+  sentry: // value of process.env.KNAPP_SENTRY | if not provided, default '' is used
 };
 ```
 

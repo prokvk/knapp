@@ -6,14 +6,16 @@ defaults =
 	env_path: './config/.env'
 	config_path: './config/config.cson'
 	api_base_url: '/api/v1'
-	auth: 'none'
 
 loadConfig = (params, extend = true) ->
-	params = _.extend defaults, params if extend
-	process.knapp_params = params
-
 	require('dotenv').config {path: params.env_path}
 	require('cson-config').load(params.config_path)
+
+	defaults.sentry = if process.env.KNAPP_SENTRY? then process.env.KNAPP_SENTRY else ""
+	defaults.auth = if process.env.KNAPP_AUTH? then process.env.KNAPP_AUTH else "none"
+
+	params = _.extend defaults, params if extend
+	process.knapp_params = params
 
 setMode = (explicitMode = null) ->
 	if explicitMode?
@@ -71,8 +73,7 @@ initRoutes = (routes) ->
 		next res.status(404).send {error: '404 Not found'}
 
 exports.init = (params) ->
-	params = _.extend defaults, params
-	loadConfig params, false
+	loadConfig params
 
 	express = require('express')
 	logger = require('morgan')
