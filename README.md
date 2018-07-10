@@ -74,7 +74,8 @@ app.init({
   config_path: './config/config.cson',
   api_base_url: '/api/v1',
   auth: 'static_token', // this value can be set via process.env.KNAPP_AUTH, but you can also override it in object passed to `init`
-  allow_headers: ['custom-header'],
+  allow_headers: ['custom-header'], //Access-Control-Allow-Headers
+  expose_headers: ['custom-header'], //Access-Control-Expose-Headers
   sentry: 'on' // this value can be set via process.env.KNAPP_SENTRY, but you can also override it in object passed to `init`
 });
 

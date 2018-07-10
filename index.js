@@ -85,6 +85,9 @@
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,UPDATE,DELETE,OPTIONS');
       allowHeaders = process.knapp_params.allow_headers != null ? "," + (process.knapp_params.allow_headers.join(',')) : "";
       res.header('Access-Control-Allow-Headers', "Content-type,Accept,X-Access-Token,X-Key" + allowHeaders);
+      if (process.knapp_params.expose_headers != null) {
+        res.header('Access-Control-Expose-Headers', process.knapp_params.expose_headers.join(','));
+      }
       if (req.method === 'OPTIONS') {
         return res.status(200).end();
       } else {

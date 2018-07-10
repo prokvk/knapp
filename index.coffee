@@ -54,6 +54,9 @@ initRoutes = (routes) ->
 		# Set custom headers for CORS
 		res.header 'Access-Control-Allow-Headers', "Content-type,Accept,X-Access-Token,X-Key#{allowHeaders}"
 
+		if process.knapp_params.expose_headers?
+			res.header 'Access-Control-Expose-Headers', process.knapp_params.expose_headers.join(',')
+
 		if req.method is 'OPTIONS'
 			res.status(200).end()
 		else
