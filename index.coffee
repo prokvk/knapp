@@ -84,9 +84,10 @@ exports.init = (params) ->
 
 	explicitMode = params.mode || null
 	setMode explicitMode
+	loggerFormat = if params.morgan_format? then params.morgan_format else ':date[clf] :method :url :status :response-time ms - :res[content-length]'
 
 	app = express()
-	app.use logger('dev')
+	app.use logger(loggerFormat)
 	app.use bodyParser.json()
 
 	process.app = app

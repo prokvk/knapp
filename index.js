@@ -106,15 +106,16 @@
   };
 
   exports.init = function(params) {
-    var app, bodyParser, explicitMode, express, logger;
+    var app, bodyParser, explicitMode, express, logger, loggerFormat;
     loadConfig(params);
     express = require('express');
     logger = require('morgan');
     bodyParser = require('body-parser');
     explicitMode = params.mode || null;
     setMode(explicitMode);
+    loggerFormat = params.morgan_format != null ? params.morgan_format : ':date[clf] :method :url :status :response-time ms - :res[content-length]';
     app = express();
-    app.use(logger('dev'));
+    app.use(logger(loggerFormat));
     app.use(bodyParser.json());
     process.app = app;
     process.request_validation_error_handler = requestValidationErrorHandler;

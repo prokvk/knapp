@@ -76,7 +76,8 @@ app.init({
   auth: 'static_token', // this value can be set via process.env.KNAPP_AUTH, but you can also override it in object passed to `init`
   allow_headers: ['custom-header'], //Access-Control-Allow-Headers
   expose_headers: ['custom-header'], //Access-Control-Expose-Headers
-  sentry: 'on' // this value can be set via process.env.KNAPP_SENTRY, but you can also override it in object passed to `init`
+  sentry: 'on', // this value can be set via process.env.KNAPP_SENTRY, but you can also override it in object passed to `init`
+  morgan_format: ':date[clf] :method :url :status :response-time ms - :res[content-length]' // for possible options check https://www.npmjs.com/package/morgan
 });
 
 // optional call to set explicit error handler for validation (auth, schema) errors, here it's used just for formatting and setting response code
@@ -100,8 +101,9 @@ var defaults = {
   env_path: './config/.env',
   config_path: './config/config.cson',
   api_base_url: '/api/v1',
-  auth: // value of process.env.KNAPP_AUTH | if not provided, default 'none' is used
-  sentry: // value of process.env.KNAPP_SENTRY | if not provided, default '' is used
+  auth: '', // value of process.env.KNAPP_AUTH | if not provided, default 'none' is used
+  sentry: '', // value of process.env.KNAPP_SENTRY | if not provided, default '' is used
+  morgan_format: ':date[clf] :method :url :status :response-time ms - :res[content-length]'
 };
 ```
 
